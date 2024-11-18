@@ -9,15 +9,31 @@ use action::{Action, ActionStruct};
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
 use std::thread::spawn;
 fn main() {
-    spawn(move || {// do this so we can still quit lol
+    //spawn(move || {
+        // do this so we can still quit lol
         send(
             SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9002),
             SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9000),
         )
-    });
-    readln().unwrap();
+    //});
+    //readln().unwrap();
 }
-
+fn debug_movement() -> Option<Vec<u8>> {
+    println!("input 1-4 for movements, 5 to stand still, and other to quit");
+    let input = readln().unwrap().parse::<i32>();
+    let action = match input {
+        Ok(5) => Some(ActionStruct::STILL),
+        Ok(1) => Some(ActionStruct::FORWARD),
+        Ok(2) => Some(ActionStruct::BACKWARD),
+        Ok(3) => Some(ActionStruct::LEFT),
+        Ok(4) => Some(ActionStruct::RIGHT),
+        _ => None,
+    };
+    match action {
+        Some(x) => Some(Action::Action(x).evaluate()),
+        None => None,
+    }
+}
 fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) {
     let socket = UdpSocket::bind(host_addr).unwrap();
     println!("Sending from {} on {}", host_addr, to_addr);
@@ -25,10 +41,14 @@ fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) {
         // let msg = get_from_cohe_portion();
         //maye async.await?
 
-        let msg_buf = Action::Chat("hi".to_string()).evaluate();
-        let msg_2 = Action::Action(ActionStruct::FORWARD).evaluate();
+        //let msg_buf = Action::Chat("hi".to_string()).evaluate();
+        //let msg_2 = Action::Action(ActionStruct::FORWARD).evaluate();
+        let msg_buf = match debug_movement() {
+            Some(x) => x,
+            None => return,
+        };
         socket.send_to(&msg_buf, to_addr).unwrap();
-        socket.send_to(&msg_2, to_addr).unwrap();
+        // socket.send_to(&msg_2, to_addr).unwrap();
         thread::sleep(Duration::from_millis(20));
     }
 }

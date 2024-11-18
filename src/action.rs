@@ -35,6 +35,12 @@ impl ActionStruct {
         left: false,
         right: true,
     };
+    pub const STILL: ActionStruct = ActionStruct {
+        forward: false,
+        backwards: false,
+        left: false,
+        right: true,
+    };
 }
 //u8 is distance
 pub enum Action {
