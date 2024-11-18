@@ -9,7 +9,7 @@ use action::{Action, ActionStruct};
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
 use std::thread::spawn;
 fn main() {
-    spawn(move || {
+    spawn(move || {// do this so we can still quit lol
         send(
             SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9002),
             SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9000),
@@ -23,6 +23,7 @@ fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) {
     println!("Sending from {} on {}", host_addr, to_addr);
     loop {
         // let msg = get_from_cohe_portion();
+        //maye async.await?
 
         let msg_buf = Action::Chat("hi".to_string()).evaluate();
         let msg_2 = Action::Action(ActionStruct::FORWARD).evaluate();
