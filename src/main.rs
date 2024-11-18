@@ -21,16 +21,16 @@ fn main() {
 fn debug_movement() -> Option<Vec<u8>> {
     println!("input 1-4 for movements, 5 to stand still, and other to quit");
     let input = readln().unwrap().parse::<i32>();
-    let action = match input {
-        Ok(5) => Some(ActionStruct::STILL),
-        Ok(1) => Some(ActionStruct::FORWARD),
-        Ok(2) => Some(ActionStruct::BACKWARD),
-        Ok(3) => Some(ActionStruct::LEFT),
-        Ok(4) => Some(ActionStruct::RIGHT),
+    let action: Option<Action> = match input {
+        Ok(5) => Some(ActionStruct::STILL.into()),
+        Ok(1) => Some(ActionStruct::FORWARD.into()),
+        Ok(2) => Some(ActionStruct::BACKWARD.into()),
+        Ok(3) => Some(ActionStruct::LEFT.into()),
+        Ok(4) => Some(ActionStruct::RIGHT.into()),
         _ => None,
     };
     match action {
-        Some(x) => Some(Action::Action(x).evaluate()),
+        Some(x) => Some(x.evaluate()),
         None => None,
     }
 }

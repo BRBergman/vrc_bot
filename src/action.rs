@@ -47,7 +47,11 @@ pub enum Action {
     Action(ActionStruct),
     Chat(String),
 }
-
+impl From<ActionStruct> for Action{
+    fn from(value: ActionStruct) -> Self {
+        Action::Action(value)
+    }
+}
 impl ActionStruct {
     fn direction(self) -> OscPacket {
         // do this for the thing
