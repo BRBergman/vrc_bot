@@ -1,5 +1,4 @@
-use std::time::UNIX_EPOCH;
-
+use std::time::SystemTime;
 use rosc::{encoder, OscMessage, OscPacket, OscTime};
 
 #[derive(Debug, Clone, Copy)]
@@ -42,7 +41,7 @@ impl ActionStruct {
         right: true,
     };
 }
-//u8 is distance
+#[allow(dead_code)]
 pub enum Action {
     Action(ActionStruct),
     Chat(String),
@@ -56,7 +55,7 @@ impl ActionStruct {
     fn direction(self) -> OscPacket {
         // do this for the thing
         OscPacket::Bundle(rosc::OscBundle {
-            timetag: OscTime::try_from(UNIX_EPOCH).unwrap(),
+            timetag: OscTime::try_from(SystemTime::now()).unwrap(),
             content: vec![
                 OscPacket::Message(OscMessage {
                     addr: "/input/MoveForward".to_string(),

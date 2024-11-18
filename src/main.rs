@@ -1,13 +1,9 @@
-extern crate rosc;
-use std::io::stdin;
-use std::io::Error;
-
-use std::thread;
+use std::io::{stdin,Error};
+use std::thread::{self,spawn};
 use std::time::Duration;
 mod action;
 use action::{Action, ActionStruct};
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
-use std::thread::spawn;
 fn main() {
     //spawn(move || {
         // do this so we can still quit lol
