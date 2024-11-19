@@ -2,40 +2,40 @@ use rosc::{encoder, OscMessage, OscPacket, OscTime, OscType};
 use std::time::SystemTime;
 
 #[derive(Debug, Clone, Copy)]
-enum Direction{
-    Minus =-1,
+enum Direction {
+    Minus = -1,
     Zero,
     Plus,
 }
-#[derive(Debug,Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Movement {
     vertical: Direction,
-    horizontal: Direction
+    horizontal: Direction,
 }
 #[allow(dead_code)]
 impl Movement {
-    pub const FORWARD:Movement =Movement{
+    pub const FORWARD: Movement = Movement {
         vertical: Direction::Plus,
         horizontal: Direction::Zero,
-    }; 
-    pub const BACKWARD:Movement =Movement{
+    };
+    pub const BACKWARD: Movement = Movement {
         vertical: Direction::Minus,
         horizontal: Direction::Zero,
-    }; 
-    pub const LEFT:Movement =Movement{
+    };
+    pub const LEFT: Movement = Movement {
         vertical: Direction::Zero,
         horizontal: Direction::Minus,
-    }; 
-    pub const RIGHT:Movement =Movement{
+    };
+    pub const RIGHT: Movement = Movement {
         vertical: Direction::Zero,
         horizontal: Direction::Plus,
-    }; 
-    pub const STILL:Movement =Movement{
+    };
+    pub const STILL: Movement = Movement {
         vertical: Direction::Zero,
         horizontal: Direction::Zero,
-    }; 
+    };
 }
-impl From<Direction> for OscType{
+impl From<Direction> for OscType {
     fn from(value: Direction) -> Self {
         let x = value as i32 as f32;
         x.into()
@@ -70,7 +70,7 @@ impl Movement {
     }
 }
 impl Action {
-    pub fn evaluate(&self) -> Vec<u8> {
+    pub fn evaluate(self) -> Vec<u8> {
         let osc_msg = match self {
             Action::Action(action_struct) => action_struct.direction(),
             Action::Chat(text) => chat_box(text.clone()),
