@@ -6,14 +6,15 @@ pub mod parse_action;
 use action::{Action, Movement};
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
 fn main() {
-    //spawn(move || {
+    spawn(move || {
     // do this so we can still quit lol
     send(
         SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9002),
         SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9000),
     )
-    //});
-    //readln().unwrap();
+    });
+    let mut choice = String::new();
+    let _ = stdin().read_line(&mut choice);
 }
 fn debug_movement() -> Option<Vec<u8>> {
     println!("input 1-4 for movements, 5 to stand still, and other to quit");
@@ -35,14 +36,6 @@ fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) {
     let socket = UdpSocket::bind(host_addr).unwrap();
     println!("Sending from {} on {}", host_addr, to_addr);
     loop {
-        // let msg = get_from_cohe_portion();
-        //maye async.await?
-
-        //let msg_buf = Action::Chat("hi".to_string()).evaluate();
-        /*let msg_buf = match debug_movement() {
-            Some(x) => x,
-            None => return,
-        };*/
         let msg_buf = parse_action::parse_action().evaluate();
         socket.send_to(&msg_buf, to_addr).unwrap();
         thread::sleep(Duration::from_millis(20));
