@@ -38,13 +38,11 @@ fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) {
         //maye async.await?
 
         //let msg_buf = Action::Chat("hi".to_string()).evaluate();
-        //let msg_2 = Action::Action(ActionStruct::FORWARD).evaluate();
         let msg_buf = match debug_movement() {
             Some(x) => x,
             None => return,
         };
         socket.send_to(&msg_buf, to_addr).unwrap();
-        // socket.send_to(&msg_2, to_addr).unwrap();
         thread::sleep(Duration::from_millis(20));
     }
 }
