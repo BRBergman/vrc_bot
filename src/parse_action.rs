@@ -3,7 +3,7 @@ use std::{env, fs::File};
 use crate::action::{Action, Movement};
 
 pub fn parse_action() -> Action{
-    
+
     let file = File::open(env::current_dir().unwrap().join("src/example_movement.json")).unwrap();
     let file: Action = serde_json::from_reader(file).unwrap();
     println!("{:?}",file);

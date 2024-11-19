@@ -4,12 +4,10 @@ use std::time::Duration;
 mod action;
 pub mod parse_action;
 use action::{Action, Movement};
-use parse_action::serialize;
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
 fn main() {
     //spawn(move || {
     // do this so we can still quit lol
-    parse_action::parse_action();
     send(
         SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9002),
         SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9000),
@@ -41,10 +39,11 @@ fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) {
         //maye async.await?
 
         //let msg_buf = Action::Chat("hi".to_string()).evaluate();
-        let msg_buf = match debug_movement() {
+        /*let msg_buf = match debug_movement() {
             Some(x) => x,
             None => return,
-        };
+        };*/
+        let msg_buf = parse_action::parse_action().evaluate();
         socket.send_to(&msg_buf, to_addr).unwrap();
         thread::sleep(Duration::from_millis(20));
     }
