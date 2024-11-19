@@ -2,11 +2,14 @@ use std::io::{stdin, Error};
 use std::thread::{self, spawn};
 use std::time::Duration;
 mod action;
+pub mod parse_action;
 use action::{Action, Movement};
+use parse_action::serialize;
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
 fn main() {
     //spawn(move || {
     // do this so we can still quit lol
+    parse_action::parse_action();
     send(
         SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9002),
         SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9000),

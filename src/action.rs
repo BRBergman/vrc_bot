@@ -1,13 +1,16 @@
 use rosc::{encoder, OscMessage, OscPacket, OscTime, OscType};
 use std::time::SystemTime;
+use serde::{Deserialize, Serialize};
+use serde_json::Result;
+use crate::parse_action::parse_action;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Deserialize,Serialize)]
 enum Direction {
     Minus = -1,
     Zero,
     Plus,
 }
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy,Deserialize,Serialize)]
 pub struct Movement {
     vertical: Direction,
     horizontal: Direction,
@@ -43,6 +46,7 @@ impl From<Direction> for OscType {
 }
 //cohe this is what i will be getting, with everything inside it!
 #[allow(dead_code)]
+#[derive(Debug,Serialize, Deserialize)]
 pub enum Action {
     Action(Movement),
     Chat(String),
