@@ -1,16 +1,16 @@
-use std::io::{stdin,Error};
-use std::thread::{self,spawn};
+use std::io::{stdin, Error};
+use std::thread::{self, spawn};
 use std::time::Duration;
 mod action;
-use action::{Action, ActionStruct};
+use action::{Action, Movement};
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
 fn main() {
     //spawn(move || {
-        // do this so we can still quit lol
-        send(
-            SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9002),
-            SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9000),
-        )
+    // do this so we can still quit lol
+    send(
+        SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9002),
+        SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9000),
+    )
     //});
     //readln().unwrap();
 }
@@ -18,11 +18,11 @@ fn debug_movement() -> Option<Vec<u8>> {
     println!("input 1-4 for movements, 5 to stand still, and other to quit");
     let input = readln().unwrap().parse::<i32>();
     let action: Option<Action> = match input {
-        Ok(5) => Some(ActionStruct::STILL.into()),
-        Ok(1) => Some(ActionStruct::FORWARD.into()),
-        Ok(2) => Some(ActionStruct::BACKWARD.into()),
-        Ok(3) => Some(ActionStruct::LEFT.into()),
-        Ok(4) => Some(ActionStruct::RIGHT.into()),
+        Ok(5) => Some(Movement::STILL.into()),
+        Ok(1) => Some(Movement::FORWARD.into()),
+        Ok(2) => Some(Movement::BACKWARD.into()),
+        Ok(3) => Some(Movement::LEFT.into()),
+        Ok(4) => Some(Movement::RIGHT.into()),
         _ => None,
     };
     match action {

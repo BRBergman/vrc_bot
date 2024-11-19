@@ -1,97 +1,69 @@
+use rosc::{encoder, OscMessage, OscPacket, OscTime, OscType};
 use std::time::SystemTime;
-use rosc::{encoder, OscMessage, OscPacket, OscTime};
 
 #[derive(Debug, Clone, Copy)]
-pub struct ActionStruct {
-    forward: bool,
-    backwards: bool,
-    left: bool,
-    right: bool,
+enum Direction{
+    Minus =-1,
+    Zero,
+    Plus,
+}
+#[derive(Debug,Clone, Copy)]
+pub struct Movement {
+    vertical: Direction,
+    horizontal: Direction
 }
 #[allow(dead_code)]
-impl ActionStruct {
-    pub const FORWARD: ActionStruct = ActionStruct {
-        forward: true,
-        backwards: false,
-        left: false,
-        right: false,
-    };
-    pub const BACKWARD: ActionStruct = ActionStruct {
-        forward: false,
-        backwards: true,
-        left: false,
-        right: false,
-    };
-    pub const LEFT: ActionStruct = ActionStruct {
-        forward: false,
-        backwards: false,
-        left: true,
-        right: false,
-    };
-    pub const RIGHT: ActionStruct = ActionStruct {
-        forward: false,
-        backwards: false,
-        left: false,
-        right: true,
-    };
-    pub const STILL: ActionStruct = ActionStruct {
-        forward: false,
-        backwards: false,
-        left: false,
-        right: true,
-    };
+impl Movement {
+    pub const FORWARD:Movement =Movement{
+        vertical: Direction::Plus,
+        horizontal: Direction::Zero,
+    }; 
+    pub const BACKWARD:Movement =Movement{
+        vertical: Direction::Minus,
+        horizontal: Direction::Zero,
+    }; 
+    pub const LEFT:Movement =Movement{
+        vertical: Direction::Zero,
+        horizontal: Direction::Minus,
+    }; 
+    pub const RIGHT:Movement =Movement{
+        vertical: Direction::Zero,
+        horizontal: Direction::Plus,
+    }; 
+    pub const STILL:Movement =Movement{
+        vertical: Direction::Zero,
+        horizontal: Direction::Zero,
+    }; 
+}
+impl From<Direction> for OscType{
+    fn from(value: Direction) -> Self {
+        let x = value as i32 as f32;
+        x.into()
+    }
 }
 #[allow(dead_code)]
 pub enum Action {
-    Action(ActionStruct),
+    Action(Movement),
     Chat(String),
 }
-impl From<ActionStruct> for Action{
-    fn from(value: ActionStruct) -> Self {
+impl From<Movement> for Action {
+    fn from(value: Movement) -> Self {
         Action::Action(value)
     }
 }
-impl ActionStruct {
+impl Movement {
     fn direction(self) -> OscPacket {
         // do this for the thing
         OscPacket::Bundle(rosc::OscBundle {
             timetag: OscTime::try_from(SystemTime::now()).unwrap(),
             content: vec![
                 OscPacket::Message(OscMessage {
-                    addr: "/input/MoveForward".to_string(),
-                    args: vec![if self.forward ^ self.backwards {
-                        self.forward
-                    } else {
-                        false
-                    }
-                    .into()],
+                    addr: "/input/Vertical".to_string(),
+                    args: vec![self.vertical.into()],
                 }),
                 OscPacket::Message(OscMessage {
-                    addr: "/input/MoveBackward".into(),
-                    args: vec![if self.forward ^ self.backwards {
-                        self.backwards
-                    } else {
-                        false
-                    }
-                    .into()],
-                }),
-                OscPacket::Message(OscMessage {
-                    addr: "/input/MoveLeft".into(),
-                    args: vec![if self.left ^ self.right {
-                        self.left
-                    } else {
-                        false
-                    }
-                    .into()],
-                }),
-                OscPacket::Message(OscMessage {
-                    addr: "/input/MoveRight".into(),
-                    args: vec![if self.left ^ self.right {
-                        self.right
-                    } else {
-                        false
-                    }
-                    .into()],
+                    addr: "/input/Horizontal".into(),
+                    args: vec![self.horizontal.into()],
                 }),
             ],
         })
@@ -107,8 +79,17 @@ impl Action {
     }
 }
 fn chat_box(text: String) -> OscPacket {
-    OscPacket::Message(OscMessage {
-        addr: "/chatbox/input".to_string(),
-        args: vec![text.into(), true.into()],
+    OscPacket::Bundle(rosc::OscBundle {
+        timetag: OscTime::try_from(SystemTime::now()).unwrap(),
+        content: vec![
+            OscPacket::Message(OscMessage {
+                addr: "/chatbox/input".to_string(),
+                args: vec![text.into(), true.into()],
+            }),
+            OscPacket::Message(OscMessage {
+                addr: "/chatbox/typing".to_string(),
+                args: vec![false.into()],
+            }),
+        ],
     })
 }
