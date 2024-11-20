@@ -8,7 +8,8 @@ pub fn parse_action() -> Action {
     println!("{:?}", file);
     file
 }
-pub fn serialize() {//this was used to make the json so i knew how to format it lol
+pub fn serialize() {
+    //this was used to make the json so i knew how to format it lol
     let a = Action::Action(Movement::BACKWARD);
     //let a = Action::Chat("hi".to_string());
     let slice_string_in_json_format = serde_json::to_string(&a).unwrap();

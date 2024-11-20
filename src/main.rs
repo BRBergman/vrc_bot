@@ -8,8 +8,8 @@ fn main() {
     spawn(move || {
         // do this so we can still quit lol
         send(
-            SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9002),
-            SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 9000),
+            SocketAddrV4::new(Ipv4Addr::LOCALHOST, 9002),
+            SocketAddrV4::new(Ipv4Addr::LOCALHOST, 9000),
         )
     });
     let mut choice = String::new();
