@@ -6,7 +6,7 @@ pub fn parse_action() -> Action {
     let file = File::open(
         env::current_dir()
             .unwrap()
-            .join("json/example_movement.json"),
+            .join("json/cohe.json"),
     )
     .unwrap();
     let file: Action = serde_json::from_reader(file).unwrap();
