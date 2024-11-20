@@ -3,17 +3,12 @@ use std::{env, fs::File};
 use crate::action::{Action, Movement};
 
 pub fn parse_action() -> Action {
-    let file = File::open(
-        env::current_dir()
-            .unwrap()
-            .join("json/cohe.json"),
-    )
-    .unwrap();
+    let file = File::open(env::current_dir().unwrap().join("json/cohe.json")).unwrap();
     let file: Action = serde_json::from_reader(file).unwrap();
     println!("{:?}", file);
     file
 }
-pub fn serialize() {
+pub fn serialize() {//this was used to make the json so i knew how to format it lol
     let a = Action::Action(Movement::BACKWARD);
     //let a = Action::Chat("hi".to_string());
     let slice_string_in_json_format = serde_json::to_string(&a).unwrap();
