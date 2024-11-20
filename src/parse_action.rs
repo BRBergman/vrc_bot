@@ -2,11 +2,16 @@ use std::{env, fs::File};
 
 use crate::action::{Action, Movement};
 
-pub fn parse_action() -> Action {
+pub fn parse_action(prev_action:&Action) -> Option<Action> {
     let file = File::open(env::current_dir().unwrap().join("json/cohe.json")).unwrap();
     let file: Action = serde_json::from_reader(file).unwrap();
     println!("{:?}", file);
-    file
+    if prev_action == &file{
+        None
+    }
+    else{
+        Some(file)
+    }
 }
 pub fn serialize() {
     //this was used to make the json so i knew how to format it lol

@@ -4,6 +4,8 @@ use std::time::Duration;
 mod action;
 pub mod parse_action;
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
+
+use action::{Action, Movement};
 fn main() {
     spawn(move || {
         // do this so we can still quit lol
@@ -18,9 +20,15 @@ fn main() {
 fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) {
     let socket = UdpSocket::bind(host_addr).unwrap();
     println!("Sending from {} on {}", host_addr, to_addr);
+    let mut prev_action = Action::Action(Movement::STILL);
     loop {
-        let msg_buf = parse_action::parse_action().evaluate();
-        socket.send_to(&msg_buf, to_addr).unwrap();
+        match parse_action::parse_action(&prev_action){
+            Some(action) => {
+                prev_action = action.clone();
+                socket.send_to(&action.evaluate(), to_addr).unwrap();
+            },
+            None => (),
+        }
         thread::sleep(Duration::from_millis(20));
     }
 }
