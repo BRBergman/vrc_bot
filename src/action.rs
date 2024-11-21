@@ -8,6 +8,12 @@ enum Direction {
     Zero,
     Plus,
 }
+impl From<Direction> for OscType {
+    fn from(value: Direction) -> Self {
+        let x = value as i32 as f32;
+        x.into()
+    }
+}
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Movement {
     vertical: Direction,
@@ -36,19 +42,7 @@ impl Movement {
         horizontal: Direction::Zero,
     };
 }
-impl From<Direction> for OscType {
-    fn from(value: Direction) -> Self {
-        let x = value as i32 as f32;
-        x.into()
-    }
-}
-//cohe this is what i will be getting, with everything inside it!
-#[allow(dead_code)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub enum Action {
-    Move(Movement),
-    Chat(String),
-}
+
 impl Movement {
     fn move_vrc_direction(self) -> OscPacket {
         // do this for the thing
@@ -67,6 +61,12 @@ impl Movement {
         })
     }
 }
+#[allow(dead_code)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+pub enum Action {
+    Move(Movement),
+    Chat(String),
+}
 impl Action {
     pub fn evaluate_vrc(&self) -> Vec<u8> {
         let osc_msg = match self {
@@ -74,6 +74,21 @@ impl Action {
             Action::Chat(text) => chatbox_vrc(text.clone()),
         };
         encoder::encode(&osc_msg).unwrap()
+    }
+    pub fn parse_action(&self) -> Option<Action> {
+        let file = File::open(
+            env::current_dir()
+                .expect("env not found")
+                .join("json/cohe.json"),
+        )
+        .expect("file not found");
+        let file = serde_json::from_reader(file).ok()?;
+        if self == &file {
+            None
+        } else {
+            println!("{:?}", file);
+            Some(file)
+        }
     }
 }
 fn chatbox_vrc(text: String) -> OscPacket {
@@ -90,25 +105,4 @@ fn chatbox_vrc(text: String) -> OscPacket {
             }),
         ],
     })
-}
-pub trait ParseAction {
-    fn parse_action(&self) -> Option<Action>;
-}
-
-impl ParseAction for Action {
-    fn parse_action(&self) -> Option<Action> {
-        let file = File::open(
-            env::current_dir()
-                .expect("env not found")
-                .join("json/cohe.json"),
-        )
-        .expect("file not found");
-        let file = serde_json::from_reader(file).ok()?;
-        if self == &file {
-            None
-        } else {
-            println!("{:?}", file);
-            Some(file)
-        }
-    }
 }

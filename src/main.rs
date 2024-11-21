@@ -4,7 +4,7 @@ use std::time::Duration;
 mod action;
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
 
-use action::{Action, Movement, ParseAction};
+use action::{Action, Movement};
 fn main() {
     spawn(move || {
         // do this so we can still quit lol
