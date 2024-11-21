@@ -1,6 +1,6 @@
 use rosc::{encoder, OscMessage, OscPacket, OscTime, OscType};
 use serde::{Deserialize, Serialize};
-use std::time::SystemTime;
+use std::{env, fs::File, time::SystemTime};
 
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq)]
 enum Direction {
@@ -90,4 +90,25 @@ fn chatbox_vrc(text: String) -> OscPacket {
             }),
         ],
     })
+}
+pub trait ParseAction {
+    fn parse_action(&self) -> Option<Action>;
+}
+
+impl ParseAction for Action {
+    fn parse_action(&self) -> Option<Action> {
+        let file = File::open(
+            env::current_dir()
+                .expect("env not found")
+                .join("json/cohe.json"),
+        )
+        .expect("file not found");
+        let file = serde_json::from_reader(file).ok()?;
+        if self == &file {
+            None
+        } else {
+            println!("{:?}", file);
+            Some(file)
+        }
+    }
 }

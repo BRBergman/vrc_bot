@@ -2,11 +2,9 @@ use std::io::stdin;
 use std::thread::{self, spawn};
 use std::time::Duration;
 mod action;
-pub mod parse_action;
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
 
-use action::{Action, Movement};
-use parse_action::ParseAction;
+use action::{Action, Movement, ParseAction};
 fn main() {
     spawn(move || {
         // do this so we can still quit lol
