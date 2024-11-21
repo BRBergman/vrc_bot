@@ -2,14 +2,19 @@ use std::{env, fs::File};
 
 use crate::action::{Action, Movement};
 
-pub fn parse_action(prev_action: &Action) -> Option<Action> {
-    let file = File::open(env::current_dir().unwrap().join("json/cohe.json")).unwrap();
-    let file: Action = serde_json::from_reader(file).unwrap();
-    if prev_action == &file {
-        None
-    } else {
-        println!("{:?}", file);
-        Some(file)
+pub trait ParseAction {
+    fn parse_action(&self) -> Option<Action>;
+}
+impl ParseAction for Action {
+    fn parse_action(&self) -> Option<Action> {
+        let file = File::open(env::current_dir().unwrap().join("json/cohe.json")).unwrap();
+        let file: Action = serde_json::from_reader(file).unwrap();
+        if self == &file {
+            None
+        } else {
+            println!("{:?}", file);
+            Some(file)
+        }
     }
 }
 pub fn serialize() {

@@ -6,6 +6,7 @@ pub mod parse_action;
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
 
 use action::{Action, Movement};
+use parse_action::ParseAction;
 fn main() {
     spawn(move || {
         // do this so we can still quit lol
@@ -22,10 +23,12 @@ fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) {
     println!("Sending from {} on {}", host_addr, to_addr);
     let mut prev_action = Action::Move(Movement::STILL);
     loop {
-        match parse_action::parse_action(&prev_action) {
+        match prev_action.parse_action() {
             Some(action) => {
                 prev_action = action;
-                socket.send_to(&prev_action.evaluate_vrc(), to_addr).unwrap();
+                socket
+                    .send_to(&prev_action.evaluate_vrc(), to_addr)
+                    .unwrap();
             }
             None => (),
         }
