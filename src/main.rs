@@ -20,13 +20,13 @@ fn main() {
 fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) {
     let socket = UdpSocket::bind(host_addr).unwrap();
     println!("Sending from {} on {}", host_addr, to_addr);
-    let mut prev_action = Action::Action(Movement::STILL);
+    let mut prev_action = Action::Move(Movement::STILL);
     loop {
-        match parse_action::parse_action(&prev_action){
+        match parse_action::parse_action(&prev_action) {
             Some(action) => {
-                prev_action = action.clone();
-                socket.send_to(&action.evaluate(), to_addr).unwrap();
-            },
+                prev_action = action;
+                socket.send_to(&prev_action.evaluate_vrc(), to_addr).unwrap();
+            }
             None => (),
         }
         thread::sleep(Duration::from_millis(20));
