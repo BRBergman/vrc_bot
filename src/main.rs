@@ -1,4 +1,3 @@
-use std::io::stdin;
 use std::thread::{self, spawn};
 use std::time::Duration;
 mod action;
@@ -15,7 +14,7 @@ fn main() {
         .unwrap()
     });
     let mut choice = String::new();
-    let _ = stdin().read_line(&mut choice);
+    let _ = std::io::stdin().read_line(&mut choice);
 }
 fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) -> std::io::Result<()> {
     let socket = UdpSocket::bind(host_addr).unwrap();

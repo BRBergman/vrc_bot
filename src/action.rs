@@ -77,15 +77,13 @@ impl Action {
     }
     pub fn parse_action(&self) -> std::io::Result<Option<Action>> {
         let file = File::open(env::current_dir()?.join("json/cohe.json"))?;
-        let file = match serde_json::from_reader(file) {
-            Ok(x) => x,
-            Err(_) => return Ok(None),
-        }; //deciding if i want improperly formatted to be an error or just be None
-        if self == &file {
+        let read = serde_json::from_reader(file)?;
+           
+        if self == &read {
             Ok(None)
         } else {
-            println!("{:?}", file);
-            Ok(Some(file))
+            println!("{:?}", read);
+            Ok(Some(read))
         }
     }
 }
