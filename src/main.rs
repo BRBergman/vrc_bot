@@ -12,21 +12,20 @@ fn main() {
             SocketAddrV4::new(Ipv4Addr::LOCALHOST, 9002),
             SocketAddrV4::new(Ipv4Addr::LOCALHOST, 9000),
         )
+        .unwrap()
     });
     let mut choice = String::new();
     let _ = stdin().read_line(&mut choice);
 }
-fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) {
+fn send(host_addr: SocketAddrV4, to_addr: SocketAddrV4) -> std::io::Result<()> {
     let socket = UdpSocket::bind(host_addr).unwrap();
     println!("Sending from {} on {}", host_addr, to_addr);
     let mut prev_action = Action::Move(Movement::STILL);
     loop {
-        match prev_action.parse_action() {
+        match prev_action.parse_action()? {
             Some(action) => {
                 prev_action = action;
-                socket
-                    .send_to(&prev_action.evaluate_vrc(), to_addr)
-                    .unwrap();
+                socket.send_to(&prev_action.evaluate_vrc(), to_addr)?;
             }
             None => (),
         }

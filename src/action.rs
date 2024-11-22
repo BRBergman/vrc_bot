@@ -71,29 +71,27 @@ impl Action {
     pub fn evaluate_vrc(&self) -> Vec<u8> {
         let osc_msg = match self {
             Action::Move(action_struct) => action_struct.move_vrc_direction(),
-            Action::Chat(text) => chatbox_vrc(text.clone()),
+            Action::Chat(text) => chatbox_vrc(text.to_owned()),
         };
         encoder::encode(&osc_msg).unwrap()
     }
-    pub fn parse_action(&self) -> Option<Action> {
-        let file = File::open(
-            env::current_dir()
-                .expect("env not found")
-                .join("json/cohe.json"),
-        )
-        .expect("file not found");
-        let file = serde_json::from_reader(file).ok()?;
+    pub fn parse_action(&self) -> std::io::Result<Option<Action>> {
+        let file = File::open(env::current_dir()?.join("json/cohe.json"))?;
+        let file = match serde_json::from_reader(file) {
+            Ok(x) => x,
+            Err(_) => return Ok(None),
+        }; //deciding if i want improperly formatted to be an error or just be None
         if self == &file {
-            None
+            Ok(None)
         } else {
             println!("{:?}", file);
-            Some(file)
+            Ok(Some(file))
         }
     }
 }
 fn chatbox_vrc(text: String) -> OscPacket {
     OscPacket::Bundle(rosc::OscBundle {
-        timetag: OscTime::try_from(SystemTime::now()).unwrap(),
+        timetag: SystemTime::now().try_into().unwrap(),
         content: vec![
             OscPacket::Message(OscMessage {
                 addr: "/chatbox/input".to_string(),
