@@ -71,14 +71,14 @@ impl Action {
     pub fn evaluate_vrc(&self) -> Vec<u8> {
         let osc_msg = match self {
             Action::Move(action_struct) => action_struct.move_vrc_direction(),
-            Action::Chat(text) => chatbox_vrc(text.to_owned()),
+            Action::Chat(text) => text.chatbox_vrc(),
         };
         encoder::encode(&osc_msg).unwrap()
     }
     pub fn parse_action(&self) -> std::io::Result<Option<Action>> {
         let file = File::open(env::current_dir()?.join("json/cohe.json"))?;
         let read = serde_json::from_reader(file)?;
-           
+
         if self == &read {
             Ok(None)
         } else {
@@ -87,18 +87,27 @@ impl Action {
         }
     }
 }
-fn chatbox_vrc(text: String) -> OscPacket {
-    OscPacket::Bundle(rosc::OscBundle {
-        timetag: SystemTime::now().try_into().unwrap(),
-        content: vec![
-            OscPacket::Message(OscMessage {
-                addr: "/chatbox/input".to_string(),
-                args: vec![text.into(), true.into()],
-            }),
-            OscPacket::Message(OscMessage {
-                addr: "/chatbox/typing".to_string(),
-                args: vec![false.into()],
-            }),
-        ],
-    })
+trait ChatBoxVrc {
+    fn chatbox_vrc(self) -> OscPacket;
+}
+impl<T> ChatBoxVrc for T
+where
+    T: ToString,
+{
+    fn chatbox_vrc(self) -> OscPacket {
+        let text = self.to_string();
+        OscPacket::Bundle(rosc::OscBundle {
+            timetag: SystemTime::now().try_into().unwrap(),
+            content: vec![
+                OscPacket::Message(OscMessage {
+                    addr: "/chatbox/input".to_string(),
+                    args: vec![text.into(), true.into()],
+                }),
+                OscPacket::Message(OscMessage {
+                    addr: "/chatbox/typing".to_string(),
+                    args: vec![false.into()],
+                }),
+            ],
+        })
+    }
 }
